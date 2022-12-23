@@ -63,8 +63,10 @@ export default function App() {
   useEffect(() => {
     if (twitterAuthentication.accessToken) {
       navigationRef.navigate('home' as never);
+    } else if (navigationRef.isReady()) {
+      navigationRef.navigate('auth' as never);
     }
-  }, [twitterAuthentication.accessToken, navigationRef]);
+  }, [twitterAuthentication, twitterAuthentication.accessToken, navigationRef]);
 
   if (!fontsLoaded) {
     return null;

@@ -1,7 +1,9 @@
 import { NavigationContainerRefWithCurrent } from "@react-navigation/native"
 import { Asset, useAssets } from "expo-asset"
+import { useAtom } from "jotai"
 import { useLayoutEffect, useState } from "react"
 import { View, Image, type ImageSourcePropType, Pressable, StyleSheet } from "react-native"
+import { twitterAuthenticationAtom } from "../../Auth/atoms/twitterAuthenticationAtom"
 
 import { InNavbarRoute, Route } from "../../types/Route"
 import { colors } from "../colors"
@@ -27,6 +29,7 @@ const NavbarButton = ({ route, icons, onPress, navigationRef }: { route?: InNavb
 
 export default ({ routes, navigationRef }: { routes: Route[]; navigationRef: NavigationRef }) => {
   const [showNavbar, setShowNavbar] = useState(false)
+  const [_, setTwitterAuthentication] = useAtom(twitterAuthenticationAtom)
 
   useLayoutEffect(() => {
     navigationRef.addListener('state', () => {
@@ -56,7 +59,10 @@ export default ({ routes, navigationRef }: { routes: Route[]; navigationRef: Nav
       {
         assets && <>
           {showableRoutes.map(({ name }, index) => <NavbarButton key={name} route={showableRoutes[index]} icons={assets[index]} navigationRef={navigationRef} />)}
-          <NavbarButton icons={assets[assets.length - 1]} onPress={() => {}} navigationRef={navigationRef} />
+          <NavbarButton icons={assets[assets.length - 1]} onPress={() => {
+            setTwitterAuthentication({})
+            // navigationRef.navigate("auth" as never)
+          }} navigationRef={navigationRef} />
         </>
       }
     </View>
