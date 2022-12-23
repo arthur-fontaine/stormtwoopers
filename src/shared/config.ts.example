@@ -1,0 +1,8 @@
+export default {
+  app: {
+    id: "stormtwoopers",
+  },
+  twitter: {
+    clientId: "YOUR_TWITTER_CLIENT_ID",
+  },
+}

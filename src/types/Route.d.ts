@@ -2,6 +2,7 @@ interface BaseRoute {
   name: string
   component: React.ComponentType<any>
   inNavbar: boolean
+  showNavbar?: boolean
 }
 
 export interface InNavbarRoute extends BaseRoute {

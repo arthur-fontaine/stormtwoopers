@@ -1,8 +1,10 @@
 import { NavigationContainerRefWithCurrent } from "@react-navigation/native"
 import { Asset, useAssets } from "expo-asset"
+import { useLayoutEffect, useState } from "react"
 import { View, Image, type ImageSourcePropType, Pressable, StyleSheet } from "react-native"
 
-import { InNavbarRoute } from "../../types/Route"
+import { InNavbarRoute, Route } from "../../types/Route"
+import { colors } from "../colors"
 
 type NavigationRef = NavigationContainerRefWithCurrent<ReactNavigation.RootParamList>
 
@@ -16,27 +18,44 @@ const NavbarButton = ({ route, icons, onPress, navigationRef }: { route?: InNavb
 
   return (
     <Pressable onPress={onPress || (route && (() => navigationRef.navigate(route.name as never)))}>
-      <View style={[styles.navbarButton, isActive && { backgroundColor: "green" }]}>
+      <View style={styles.navbarButton}>
         <Image source={icon} style={styles.navbarIcon} />
       </View>
     </Pressable>
   )
 }
 
-export default ({ routes, navigationRef }: { routes: InNavbarRoute[]; navigationRef: NavigationRef }) => {
+export default ({ routes, navigationRef }: { routes: Route[]; navigationRef: NavigationRef }) => {
+  const [showNavbar, setShowNavbar] = useState(false)
+
+  useLayoutEffect(() => {
+    navigationRef.addListener('state', () => {
+      const currentRouteName = navigationRef.getCurrentRoute()?.name
+      const currentRoute = routes.find(({ name }) => name === currentRouteName)
+  
+      if (currentRoute) {
+        setShowNavbar(currentRoute.showNavbar ?? true)
+      }
+    })
+  }, [])
+
+  const showableRoutes: InNavbarRoute[] = routes.filter(({ inNavbar }) => inNavbar) as InNavbarRoute[]
+
   const assets = [
-    ...routes.map(({ icons }) => ({ active: useAssets(icons.active)[0]?.[0], inactive: useAssets(icons.inactive)[0]?.[0] })),
+    ...showableRoutes.map(({ icons }) => ({ active: useAssets(icons.active)[0]?.[0], inactive: useAssets(icons.inactive)[0]?.[0] })),
     {
       active: useAssets(require("../../../assets/icons/logout.png"))[0]?.[0],
       inactive: useAssets(require("../../../assets/icons/logout.png"))[0]?.[0],
     }
   ]
 
+  if (!showNavbar) return null
+
   return (
     <View style={styles.navbar}>
       {
         assets && <>
-          {routes.map(({ name }, index) => <NavbarButton key={name} route={routes[index]} icons={assets[index]} navigationRef={navigationRef} />)}
+          {showableRoutes.map(({ name }, index) => <NavbarButton key={name} route={showableRoutes[index]} icons={assets[index]} navigationRef={navigationRef} />)}
           <NavbarButton icons={assets[assets.length - 1]} onPress={() => {}} navigationRef={navigationRef} />
         </>
       }
@@ -48,7 +67,7 @@ const styles = StyleSheet.create({
   navbar: {
     width: "100%",
     height: 80,
-    backgroundColor: "white",
+    backgroundColor: colors.white.normal,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
