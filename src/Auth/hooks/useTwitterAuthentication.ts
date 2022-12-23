@@ -16,7 +16,8 @@ const twitterOptions = {
   scopes: [
     "tweet.read",
     "users.read",
-    "follows.read"
+    "follows.read",
+    "follows.write"
   ],
   discovery: {
     authorizationEndpoint: "https://twitter.com/i/oauth2/authorize",

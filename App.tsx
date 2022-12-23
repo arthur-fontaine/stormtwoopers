@@ -1,15 +1,21 @@
 import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
+import Constants from 'expo-constants';
 import * as SplashScreen from 'expo-splash-screen';
 import { useAtom } from 'jotai';
-import { useCallback } from 'react';
-import { StatusBar } from 'react-native';
-import { SafeAreaView } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { StatusBar, SafeAreaView, LogBox } from 'react-native';
 
 import Auth from './src/Auth';
+import { twitterAuthenticationAtom } from './src/Auth/atoms/twitterAuthenticationAtom';
+import Home from './src/Home';
 import Navbar from './src/shared/components/Navbar';
 import { Route } from './src/types/Route';
+
+if (Constants.expoConfig?.extra?.env === 'production') {
+  LogBox.ignoreAllLogs();
+}
 
 SplashScreen.preventAutoHideAsync();
 
@@ -17,10 +23,21 @@ const Stack = createNativeStackNavigator();
 
 const routes: Route[] = [
   { name: 'auth', component: Auth, inNavbar: false, showNavbar: false },
+  {
+    name: 'home',
+    component: Home,
+    inNavbar: true,
+    showNavbar: true,
+    icons: {
+      active: require('./assets/icons/home-screen-active.png'),
+      inactive: require('./assets/icons/home-screen-inactive.png'),
+    },
+  },
 ];
 
 export default function App() {
   const navigationRef = useNavigationContainerRef();
+  const [navigationReady, setNavigationReady] = useState(false);
 
   const [fontsLoaded] = useFonts({
     'Lato-Thin': require('./assets/fonts/Lato/Lato-Thin.ttf'),
@@ -36,10 +53,18 @@ export default function App() {
   });
 
   const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
+    if (fontsLoaded && navigationReady) {
       await SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, navigationReady]);
+
+  const [twitterAuthentication] = useAtom(twitterAuthenticationAtom);
+
+  useEffect(() => {
+    if (twitterAuthentication.accessToken) {
+      navigationRef.navigate('home' as never);
+    }
+  }, [twitterAuthentication.accessToken, navigationRef]);
 
   if (!fontsLoaded) {
     return null;
@@ -48,7 +73,11 @@ export default function App() {
   return (
     <SafeAreaView style={{ flex: 1 }} onLayout={onLayoutRootView}>
       <StatusBar />
-      <NavigationContainer ref={navigationRef}>
+      <NavigationContainer
+        ref={navigationRef}
+        onReady={() => setNavigationReady(true)}
+        initialState={twitterAuthentication.accessToken ? { routes: [{ name: 'home' }] } : undefined}
+      >
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {routes.map(({ name, component }) => (
             <Stack.Screen key={name} name={name} component={component} />
