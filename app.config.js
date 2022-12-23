@@ -30,7 +30,7 @@ module.exports = {
       favicon: "./assets/favicon.png"
     },
     extra: {
-      env: process.env.ENV || "development",
+      showLogs: process.env.LOG != 0,
       eas: {
         projectId: "6b666bc5-ca31-4d31-9833-e242af69082f"
       }

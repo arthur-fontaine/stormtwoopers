@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "npm run start:dev",
-    "start:dev": "ENV=development expo start",
-    "start:prod": "ENV=production expo start",
+    "start": "expo start",
+    "start:no-log": "LOG=0 npm run start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web"

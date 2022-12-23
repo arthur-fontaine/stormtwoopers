@@ -13,7 +13,7 @@ import Home from './src/Home';
 import Navbar from './src/shared/components/Navbar';
 import { Route } from './src/types/Route';
 
-if (Constants.expoConfig?.extra?.env === 'production') {
+if (!Constants.expoConfig?.extra?.showLogs) {
   LogBox.ignoreAllLogs();
 }
 
