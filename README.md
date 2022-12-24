@@ -17,12 +17,37 @@ Stormtwoopers is a mobile app that allows you to easily sort your Twitter subscr
 - [Node.js](https://nodejs.org/en/)
 - [Expo](https://expo.io/)
 - [Twitter Developer Account](https://developer.twitter.com/en/apply-for-access)
+- [Expo Account](https://expo.io/signup)
 
 ### Setup
 
 1. Clone the repository
 2. Install dependencies with `npm install`
-3. Create a `/src/shared/config.ts` (see [`/src/shared/config.ts.example`](src/shared/config.ts.example) for an example)
+3. Create a Twitter Developer Account and create a new app (see [below](#setting-up-the-twitter-developer-account) for more details)
+4. Create a `/src/shared/config.ts` and fill it (see [`/src/shared/config.ts.example`](src/shared/config.ts.example) for an example)
+5. Remove the `owner` field from the `app.config.js` file
+
+<!-- **Expo Project**
+
+You will need to create a new Expo project named "Stormtwoopers". You can go to [https://expo.dev/accounts/<username>/projects?create=true](https://expo.dev/accounts/<username>/projects?create=true) to create a new project. Once you have created the project, you will need to link the project to the repository. You first need to remove the `owner` field from the `app.config.js` file. Then, you can run `expo init --id <project-id>` (the command will be displayed on the project page) to link the project to the repository. -->
+
+#### Setting up the Twitter Developer Account
+
+Once you have created a Twitter Developer Account, you will need to create a new app named "Stormtwoopers".
+
+> Note: The app should have access to the Twitter API v2.
+
+Once you have created the app, you will need to configure the app to allow for user authentication. Here are the fields you will need to fill out:
+
+| Field | Value |
+| --- | --- |
+| App permissions | Read and write |
+| Request email from users | Yes |
+| Type of app | Native App |
+| Callback URI / Redirect URI | `https://auth.expo.io/@<your-username>/stormtwoopers` |
+| Website URL | `https://github.com/arthur-fontaine/stormtwoopers` |
+| Terms of service | `https://github.com/arthur-fontaine/stormtwoopers/blob/main/TERMS_OF_SERVICE.md` |
+| Privacy policy | `https://github.com/arthur-fontaine/stormtwoopers/blob/main/PRIVACY_POLICY.md` |
 
 ## Usage
 
